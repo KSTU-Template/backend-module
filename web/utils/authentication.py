@@ -11,7 +11,7 @@ from web.database.dals import UserDAL
 from web.database.session import get_db
 from web.utils.hashing import Hasher
 
-ALGORITHM = "HS256"
+ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60  # = сутки
 
 
@@ -20,7 +20,7 @@ class Auth(BaseModel):
     password: str
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/auth/login')
 
 
 async def authenticate_user(session, username: str, password: str):
@@ -45,18 +45,18 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    username: str
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme), session: AsyncSession = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        detail='Could not validate credentials',
+        headers={'WWW-Authenticate': 'Bearer'},
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        username: str = payload.get('sub')
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)

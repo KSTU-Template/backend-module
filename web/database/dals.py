@@ -1,7 +1,7 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from web.database.models import User
+from web.database.models import User, Product, InformationChannel, Client
 
 
 class UserDAL:
@@ -14,7 +14,7 @@ class UserDAL:
         return new_user
 
     @staticmethod
-    async def read(db_session: AsyncSession, **kwargs) -> User | list[User]:
+    async def read(db_session: AsyncSession, **kwargs) -> list[User]:
         stmt = select(User).filter_by(**kwargs)
         users = await db_session.scalars(stmt)
 
@@ -26,3 +26,44 @@ class UserDAL:
         user = await db_session.scalar(stmt)
 
         return user
+
+
+class ProductDAL:
+    @staticmethod
+    async def read(db_session: AsyncSession, **kwargs) -> list[Product]:
+        stmt = select(Product).filter_by(**kwargs)
+        products = await db_session.scalars(stmt)
+
+        return products.fetchall()
+
+
+class InformationChannelDAL:
+    @staticmethod
+    async def read(db_session: AsyncSession, **kwargs) -> list[InformationChannel]:
+        stmt = select(InformationChannel).filter_by(**kwargs)
+        channels = await db_session.scalars(stmt)
+
+        return channels.fetchall()
+
+
+class ClientDAL:
+    @staticmethod
+    async def create(db_session: AsyncSession, **kwargs) -> Client:
+        new_client = Client(**kwargs)
+        db_session.add(new_client)
+        await db_session.commit()
+
+        return new_client
+
+    @staticmethod
+    async def read(db_session: AsyncSession, **kwargs) -> list[Client]:
+        stmt = select(Client).filter_by(**kwargs)
+        clients = await db_session.scalars(stmt)
+
+        return clients.fetchall()
+
+    @staticmethod
+    async def delete(db_session: AsyncSession, **kwargs) -> None:
+        stmt = delete(Client).filter_by(**kwargs)
+        await db_session.execute(stmt)
+        await db_session.commit()

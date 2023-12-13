@@ -1,4 +1,6 @@
 import asyncio
+from collections import namedtuple
+from datetime import timedelta
 from typing import Generator, AsyncGenerator
 
 import pytest
@@ -9,8 +11,10 @@ from starlette.testclient import TestClient
 
 from web.__main__ import app
 from web.config import DATABASE_URL_TEST
+from web.database.dals import UserDAL
 from web.database.models import Base
 from web.database.session import get_db
+from web.utils.authentication import create_access_token
 
 metadata = Base.metadata
 
@@ -53,3 +57,22 @@ client = TestClient(app)
 async def ac() -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
+
+
+@pytest.fixture(scope='session')
+async def auth() -> (int, str):
+    user_data = {'username': 'test_user', 'password': 'password'}
+    async with async_session() as session:
+        user = await UserDAL.read(session, username=user_data['username'])
+        if len(user) == 0:
+            user = await UserDAL.create(session, user_data['username'], user_data['password'])
+        else:
+            user = user[0]
+
+    access_token = create_access_token(
+        data={"sub": user_data['username']}, expires_delta=timedelta(minutes=30)
+    )
+
+    Auth = namedtuple('Auth', ['user_id', 'access_token'])
+
+    return Auth(user_id=user.id, access_token=access_token)

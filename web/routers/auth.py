@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from web.database.dals import UserDAL
@@ -10,7 +11,7 @@ from web.utils.authentication import authenticate_user, create_access_token, ACC
     get_current_user
 from web.utils.hashing import Hasher
 
-router = APIRouter(prefix='/auth', tags=['Users'])
+router = APIRouter(prefix='/auth', tags=['Auth'])
 
 
 @router.post('/', response_model=UserOut)
@@ -21,7 +22,7 @@ async def register_user(body: UserIn, session: AsyncSession = Depends(get_db)):
 
 
 @router.post('/login', response_model=LoginOut)
-async def login_user(body: LoginIn, session: AsyncSession = Depends(get_db)):
+async def login_user(body: OAuth2PasswordRequestForm = Depends(), session: AsyncSession = Depends(get_db)):
     user = await authenticate_user(session, body.username, body.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
