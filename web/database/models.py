@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Float
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -22,25 +21,20 @@ class User(Base):
         return f'{self.id} - {self.username}'
 
 
-class UserSession(Base):
-    __tablename__ = 'user_sessions'
+class Chat(Base):
+    __tablename__ = 'chats'
 
     id = Column(Integer, primary_key=True)
+
+    text = Column(String, nullable=True)
+
+    product_name = Column(String, nullable=True)
+    channel_id = Column(ForeignKey('channels.id'), nullable=True)
+    client_id = Column(ForeignKey('clients.id'), nullable=True)
+
+    question_id = Column(ForeignKey('chats.id'), nullable=True)
 
     user_id = Column(ForeignKey('web_users.id'))
-    client_id = Column(ForeignKey('clients.id'))
-
-    created_at = Column(DateTime, default=datetime.now)
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
-
-
-class Product(Base):
-    __tablename__ = 'products'
-
-    id = Column(Integer, primary_key=True)
-
-    name = Column(String)
-    description = Column(String)
 
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
@@ -63,7 +57,10 @@ class Client(Base):
 
     id = Column(Integer, primary_key=True)
 
-    data = Column(JSONB)
+    username = Column(String)
+    gender = Column(String)
+    age = Column(Float)
+
     user_id = Column(ForeignKey('web_users.id'))
 
     created_at = Column(DateTime, default=datetime.now)
