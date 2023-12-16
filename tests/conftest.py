@@ -1,10 +1,12 @@
 import asyncio
+import os
 from collections import namedtuple
 from datetime import timedelta
 from typing import Generator, AsyncGenerator
 
 import pytest
 from httpx import AsyncClient
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.pool import NullPool
 from starlette.testclient import TestClient
@@ -20,6 +22,8 @@ metadata = Base.metadata
 
 engine = create_async_engine(DATABASE_URL_TEST, future=True, echo=False, poolclass=NullPool)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
+
+path_to_file = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/tests/backup.sql'
 
 
 async def override_get_db() -> Generator:
@@ -38,6 +42,10 @@ app.dependency_overrides[get_db] = override_get_db
 async def prepare_database():
     async with engine.begin() as conn:
         await conn.run_sync(metadata.create_all)
+        await conn.execute(
+            text("INSERT INTO public.channels (id, name, description, created_at, updated_at) VALUES (1, 'TMO', 'Колл центр (телемеркетинг)', '2023-12-16 00:47:19.000000', '2023-12-16 00:47:19.000000');")
+        )
+        print('---> Database prepared')
     yield
     async with engine.begin() as conn:
         await conn.run_sync(metadata.drop_all)

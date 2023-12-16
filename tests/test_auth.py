@@ -16,7 +16,7 @@ def test_login() -> None:
         data={"username": "test_user", "grant_type": "password", "password": "password"},
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
-    print(response.json())
+
     assert response.status_code == 200
     body = response.json()
     assert body['token_type'] == 'bearer'

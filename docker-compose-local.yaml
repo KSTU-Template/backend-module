@@ -11,3 +11,13 @@ services:
       - ./postgresql:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  test-db:
+    container_name: "dragonfly-web-test-database"
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER_TEST}
+      - POSTGRES_PASSWORD=${DB_PASS_TEST}
+      - POSTGRES_DB=${DB_NAME_TEST}
+    restart: always
+    ports:
+      - "5433:5432"

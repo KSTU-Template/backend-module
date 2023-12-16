@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel
 
 
 class QuestionIn(BaseModel):
@@ -6,6 +6,6 @@ class QuestionIn(BaseModel):
     channel_id: int
     client_id: int
 
-    @field_validator('channel_id')
-    def validate_product_name(cls, value):
-        return True
+
+class QuestionPatchIn(BaseModel):
+    is_liked: bool

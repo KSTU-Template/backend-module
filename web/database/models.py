@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Float
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -32,6 +32,7 @@ class Chat(Base):
     channel_id = Column(ForeignKey('channels.id'), nullable=True)
     client_id = Column(ForeignKey('clients.id'), nullable=True)
 
+    is_liked = Column(Boolean, nullable=True)
     question_id = Column(ForeignKey('chats.id'), nullable=True)
 
     user_id = Column(ForeignKey('web_users.id'))

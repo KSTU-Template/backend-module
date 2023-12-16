@@ -18,19 +18,26 @@ def test_create_client(auth):
 
 
 def test_get_clients(auth):
-    # clients_data = [
-    #     {'gender': 'female', 'age': 18.0, 'region': 'moscow'},
-    #     {'gender': 'male', 'age': 56, 'region': 'tokyo'},
-    # ]
-    # async with async_session() as session:
-    #     for data in clients_data:
-    #         await ClientDAL.create(session, data=data, user_id=auth.user_id)
-    #
-    # response = client.get('/api/client/', headers={'Authorization': f'Bearer {auth.access_token}'})
-    #
-    # assert response.status_code == 200
-    pass
+    clients_data = [
+        {'gender': 'female', 'age': 18.0, 'username': 'moscow'},
+        {'gender': 'male', 'age': 56, 'username': 'tokyo'},
+    ]
+    for data in clients_data:
+        client.post('/api/client/', headers={'Authorization': f'Bearer {auth.access_token}'}, json=data)
+
+    response = client.get(
+        '/api/client/',
+        headers={'Authorization': f'Bearer {auth.access_token}'},
+    )
+
+    assert response.status_code == 200
 
 
-def test_delete_client():
-    pass
+def test_delete_client(auth):
+    client_data = {'gender': 'female', 'age': 18.0, 'username': 'john_doe'}
+    response = client.post("/api/client/", json=client_data, headers={"Authorization": f"Bearer {auth.access_token}"})
+    assert response.status_code == 200
+    client_id = response.json()["id"]
+
+    response = client.delete(f"/api/client/{client_id}", headers={"Authorization": f"Bearer {auth.access_token}"})
+    assert response.status_code == 204

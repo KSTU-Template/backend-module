@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from web.database.models import User, Client, InformationChannel, Chat
@@ -43,6 +43,14 @@ class ChatDAL:
         chat = await db_session.scalars(stmt)
 
         return chat.fetchall()
+
+    @staticmethod
+    async def update(db_session: AsyncSession, question_id: int, **kwargs) -> Chat:
+        result = await db_session.execute(
+            update(Chat).where(Chat.id == question_id).values(kwargs).returning(Chat)
+        )
+        await db_session.commit()
+        return result.scalar_one_or_none()
 
 
 class InformationChannelDAL:
