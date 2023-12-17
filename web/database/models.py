@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Float, Boolean
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -28,7 +29,7 @@ class Chat(Base):
 
     text = Column(String, nullable=True)
 
-    product_name = Column(String, nullable=True)
+    product_id = Column(ForeignKey('products.id'), nullable=True)
     channel_id = Column(ForeignKey('channels.id'), nullable=True)
     client_id = Column(ForeignKey('clients.id'), nullable=True)
 
@@ -48,6 +49,23 @@ class InformationChannel(Base):
 
     name = Column(String)
     description = Column(String)
+
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+class Product(Base):
+    __tablename__ = 'products'
+
+    id = Column(Integer, primary_key=True)
+
+    title = Column(String)
+    description = Column(String)
+    interest_rate = Column(String)
+    category = Column(String)
+    advantages = Column(JSONB)
+    conditions = Column(String)
+    benefits = Column(String)
 
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)

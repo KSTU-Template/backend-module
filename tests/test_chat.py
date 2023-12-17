@@ -4,7 +4,7 @@ from conftest import client
 def test_request_offer(auth):
     client_data = {'gender': 'female', 'age': 18.0, 'username': 'john_doe'}
     client.post('/api/client/', headers={'Authorization': f'Bearer {auth.access_token}'}, json=client_data)
-    question_data = {"product_name": "Test Product", "channel_id": 1, "client_id": 1}
+    question_data = {"product_id": 1, "channel_id": 1, "client_id": 1}
     response = client.post("/api/chat/", json=question_data, headers={"Authorization": f"Bearer {auth.access_token}"})
     assert response.status_code == 200
     assert "text" in response.json()
@@ -13,7 +13,7 @@ def test_request_offer(auth):
 
 def test_mark_answer(auth):
     # Создаем тестовый вопрос
-    question_data = {"product_name": "Test Product", "channel_id": 1, "client_id": 1}
+    question_data = {"product_id": 1, "channel_id": 1, "client_id": 1}
     response = client.post("/api/chat/", json=question_data, headers={"Authorization": f"Bearer {auth.access_token}"})
     assert response.status_code == 200
     question_id = response.json()["id"]

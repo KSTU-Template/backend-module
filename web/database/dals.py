@@ -1,7 +1,7 @@
 from sqlalchemy import select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from web.database.models import User, Client, InformationChannel, Chat
+from web.database.models import User, Client, InformationChannel, Chat, Product
 
 
 class UserDAL:
@@ -83,3 +83,20 @@ class ClientDAL:
         stmt = delete(Client).filter_by(**kwargs)
         await db_session.execute(stmt)
         await db_session.commit()
+
+
+class ProductDAL:
+    @staticmethod
+    async def create(db_session: AsyncSession, **kwargs) -> Product:
+        new_product = Product(**kwargs)
+        db_session.add(new_product)
+        await db_session.commit()
+
+        return new_product
+
+    @staticmethod
+    async def read(db_session: AsyncSession, **kwargs) -> list[Product]:
+        stmt = select(Product).filter_by(**kwargs)
+        products = await db_session.scalars(stmt)
+
+        return products.fetchall()

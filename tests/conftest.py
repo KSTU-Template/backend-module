@@ -45,7 +45,9 @@ async def prepare_database():
         await conn.execute(
             text("INSERT INTO public.channels (id, name, description, created_at, updated_at) VALUES (1, 'TMO', 'Колл центр (телемеркетинг)', '2023-12-16 00:47:19.000000', '2023-12-16 00:47:19.000000');")
         )
-        print('---> Database prepared')
+        await conn.execute(
+            text("INSERT INTO public.products (id, title, description, interest_rate, category, advantages, conditions, benefits, created_at, updated_at) VALUES (1, 'Страхование для путешественников', 'Надежная защита вашего отдыха»', null, 'INS_LIFE', null, '', null, '2023-12-17 17:10:06.615689', '2023-12-17 17:10:06.615697');")
+        )
     yield
     async with engine.begin() as conn:
         await conn.run_sync(metadata.drop_all)
