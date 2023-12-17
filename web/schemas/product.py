@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class ProductOut(BaseModel):
+    id: int
     title: str
     description: str
     interest_rate: str | None = None

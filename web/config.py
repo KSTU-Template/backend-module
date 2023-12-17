@@ -13,6 +13,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 APP_HOST = os.getenv('APP_HOST', '0.0.0.0')
 
+MODEL_API_URL = os.getenv('MODEL_API_URL')
+
 DATABASE_USER = os.getenv('POSTGRES_USER')
 DATABASE_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 DATABASE_HOST = os.getenv('DBHOST')
