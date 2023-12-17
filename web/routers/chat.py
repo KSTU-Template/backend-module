@@ -42,7 +42,7 @@ async def request_offer(
     if not ai_answer:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
-    answer = await ChatDAL.create(session, text=ai_answer['answer'], question_id=question.id, user_id=current_user.id)
+    answer = await ChatDAL.create(session, text=ai_answer['text'], question_id=question.id, user_id=current_user.id)
 
     return answer
 

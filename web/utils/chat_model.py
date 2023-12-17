@@ -1,17 +1,17 @@
 import json
 
-import httpx
+import aiohttp
 
 from web.config import MODEL_API_URL
 
 
 async def get_model_answer(body: dict) -> dict | None:
-    body = json.dumps(body, indent=4, ensure_ascii=False, default=str)
+    body = json.loads(json.dumps(body, default=str, ensure_ascii=False))
 
-    async with httpx.AsyncClient() as client:
-        res = await client.post(f"{MODEL_API_URL}/generate", json=body)
+    async with aiohttp.ClientSession() as session:
+        res = await session.post(f"{MODEL_API_URL}/generate", json=body)
 
-    if res.status_code != 200:
+    if res.status != 200:
         return None
 
-    return res.json()
+    return await res.json()
